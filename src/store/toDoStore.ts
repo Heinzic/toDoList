@@ -1,16 +1,16 @@
 import { makeAutoObservable } from "mobx"
 
 export interface IToDo {
-    id: number,
+    id: string,
     title: string,
     completed: boolean
 }
 
 class toDo {
     toDoArray = [
-        {id:1, title:'Задача 1', completed:false},
-        {id:2, title:'Задача 2', completed:false},
-        {id:3, title:'Задача 3', completed:false}
+        {id:'1', title:'Задача 1', completed:false},
+        {id:'2', title:'Задача 2', completed:false},
+        {id:'3', title:'Задача 3', completed:false}
     ]
 
     constructor() {
@@ -21,11 +21,11 @@ class toDo {
         this.toDoArray.push(toDo);
     }
 
-    removeToDo(id: number) {
+    removeToDo(id: string) {
         this.toDoArray = this.toDoArray.filter(toDo => toDo.id !== id)
     }
 
-    completeToDo(id: number) {
+    completeToDo(id: string) {
         this.toDoArray = this.toDoArray.map(toDo => toDo.id === id ? {...toDo, completed: !toDo.completed} : toDo)
     }
 }
