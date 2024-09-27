@@ -1,9 +1,10 @@
 import './App.css';
+import ToDoPage from './components/toDoPage';
 
 function App() {
   return (
     <div className="App">
-      <h1 className='text-red-300'>dddd</h1>
+      <ToDoPage/>
     </div>
   );
 }
