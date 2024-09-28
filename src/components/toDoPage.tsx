@@ -13,7 +13,8 @@ const toDoPage: FunctionComponent = observer(() => {
                         toDo.addToDo({
                             id: Date.now().toString(),
                             completed: false,
-                            title:'ddd'
+                            title:'ddd',
+                            subToDos: []
                         })}
                         }
                         text="+"
@@ -21,7 +22,7 @@ const toDoPage: FunctionComponent = observer(() => {
                 </div>
                 
                 {toDo.toDoArray.map(item =>
-                <ToDoItem {...item}/>
+                    <ToDoItem {...item}/>
                 )}
             </div>
             <div className="">
