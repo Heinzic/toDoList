@@ -19,6 +19,59 @@ function getToDos(): IToDo[] {
     }
 }
 
+function findToDoById(todos: IToDo[], id: string): IToDo | null {
+    for (const todo of todos) {
+        if (todo.id === id) {
+            return todo;
+        }
+
+        if (todo.subToDos) {
+            const result = findToDoById(todo.subToDos, id);
+            if (result) {
+                return result;
+            }
+        }
+    }
+    return null;
+}
+
+function findAndRemoveToDoById(todos: IToDo[], id: string): IToDo[] {
+    return todos.reduce((acc: IToDo[], todo: IToDo) => {
+        if (todo.id === id) {
+            return acc; 
+        }
+
+        if (todo.subToDos) {
+            const updatedSubToDos = findAndRemoveToDoById(todo.subToDos, id);
+            acc.push({ ...todo, subToDos: updatedSubToDos });
+        } else {
+            acc.push(todo);
+        }
+
+        return acc;
+    }, []);
+}
+
+function completeToDoById(todos: IToDo[], id: string, isSub: boolean = false): IToDo[] {
+    return todos.reduce((acc: IToDo[], todo: IToDo) => {
+        
+        if (todo.id === id || isSub) {
+            todo.completed = !todo.completed;
+            
+            if (todo.subToDos) {
+                const updatedSubToDos = completeToDoById(todo.subToDos, id, true);
+                acc.push({ ...todo, completed: todo.completed, subToDos: updatedSubToDos });
+            }
+
+        } else {
+            acc.push({ ...todo, completed: todo.completed });
+            completeToDoById(todo.subToDos, id);
+        }
+
+        return acc;
+    }, []);
+}
+
 class toDo {
     toDoArray = getToDos()
 
@@ -32,17 +85,17 @@ class toDo {
     }
 
     addSubToDo(toDo: IToDo, id:string) {
-        this.toDoArray.find(item => item.id === id)?.subToDos?.push(toDo);
+        findToDoById(this.toDoArray, id)?.subToDos.push(toDo);
         localeStorageService.setItem(this.toDoArray, 'todos');
     }
 
     removeToDo(id: string) {
-        this.toDoArray = this.toDoArray.filter(toDo => toDo.id !== id)
+        this.toDoArray = findAndRemoveToDoById(this.toDoArray, id);
         localeStorageService.setItem(this.toDoArray, 'todos');
     }
 
     completeToDo(id: string) {
-        this.toDoArray = this.toDoArray.map(toDo => toDo.id === id ? {...toDo, completed: !toDo.completed} : toDo)
+        this.toDoArray = completeToDoById(this.toDoArray, id);
         localeStorageService.setItem(this.toDoArray, 'todos');
     }
 }
